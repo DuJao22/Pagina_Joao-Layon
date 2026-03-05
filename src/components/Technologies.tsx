@@ -15,7 +15,7 @@ const techList = [
 
 export default function Technologies() {
   return (
-    <section className="py-32 bg-[#0d0d0d] relative overflow-hidden">
+    <section id="fase-2" className="py-32 bg-[#0d0d0d] relative overflow-hidden">
       <div className="container mx-auto px-6 relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
