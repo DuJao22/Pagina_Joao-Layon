@@ -1,4 +1,5 @@
-import { motion } from 'motion/react';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform, MotionValue } from 'motion/react';
 import { 
   Monitor, HeartPulse, ShoppingCart, Globe, ShoppingBag, CreditCard, 
   Cpu, Bot, BarChart3, TrendingUp, Target, Camera, Smartphone, 
@@ -88,62 +89,155 @@ const services = [
   },
 ];
 
-export default function Services() {
+function ServiceCard({ service, index, total, scrollYProgress }: { service: any, index: number, total: number, scrollYProgress: MotionValue<number> }) {
+  const anglePerItem = 360 / total;
+  const rotate = index * anglePerItem;
+  const radius = 1000;
+
+  const cardProgress = index / (total - 1);
+  const windowSize = 1 / (total - 1);
+
+  const opacity = useTransform(
+    scrollYProgress,
+    [cardProgress - windowSize * 1.5, cardProgress, cardProgress + windowSize * 1.5],
+    [0.1, 1, 0.1]
+  );
+
+  const scale = useTransform(
+    scrollYProgress,
+    [cardProgress - windowSize * 1.5, cardProgress, cardProgress + windowSize * 1.5],
+    [0.7, 1, 0.7]
+  );
+
+  const borderColor = useTransform(
+    scrollYProgress,
+    [cardProgress - windowSize * 0.5, cardProgress, cardProgress + windowSize * 0.5],
+    ['rgba(34, 34, 34, 1)', 'rgba(0, 245, 255, 0.8)', 'rgba(34, 34, 34, 1)']
+  );
+
+  const boxShadow = useTransform(
+    scrollYProgress,
+    [cardProgress - windowSize * 0.5, cardProgress, cardProgress + windowSize * 0.5],
+    ['0 0 0 rgba(0,245,255,0)', '0 20px 40px rgba(0,245,255,0.2)', '0 0 0 rgba(0,245,255,0)']
+  );
+
   return (
-    <section className="py-32 relative z-10 bg-[#0a0a0a]">
-      <div className="container mx-auto px-6">
+    <div
+      className="absolute top-1/2 left-1/2 w-[280px] md:w-[340px] h-[340px] md:h-[450px]"
+      style={{
+        transform: `translate(-50%, -50%) rotateY(${rotate}deg) translateZ(${radius}px)`,
+        transformStyle: "preserve-3d"
+      }}
+    >
+      <motion.div 
+        className="w-full h-full p-5 md:p-6 rounded-2xl bg-[#111111] border flex flex-col will-change-transform"
+        style={{ 
+          opacity,
+          scale,
+          borderColor,
+          boxShadow
+        }}
+      >
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#1a1a1a] border border-[#333] flex items-center justify-center flex-shrink-0">
+            <service.icon className="w-5 h-5 md:w-6 md:h-6 text-[#00f5ff]" />
+          </div>
+          <h3 className="text-base md:text-xl font-semibold text-white leading-tight">{service.title}</h3>
+        </div>
+        <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm text-gray-400 flex-grow">
+          {service.items.map((item: string, i: number) => (
+            <li key={i} className="flex items-start gap-2">
+              <span className="text-[#6a00ff] mt-1 text-[8px] md:text-[10px]">▶</span>
+              <span className="leading-snug">{item}</span>
+            </li>
+          ))}
+        </ul>
+      </motion.div>
+    </div>
+  );
+}
+
+function ProgressDot({ index, total, scrollYProgress }: { index: number, total: number, scrollYProgress: MotionValue<number> }) {
+  const cardProgress = index / (total - 1);
+  const windowSize = 1 / (total - 1);
+  
+  const opacity = useTransform(
+    scrollYProgress,
+    [cardProgress - windowSize * 0.5, cardProgress, cardProgress + windowSize * 0.5],
+    [0.3, 1, 0.3]
+  );
+  
+  const scale = useTransform(
+    scrollYProgress,
+    [cardProgress - windowSize * 0.5, cardProgress, cardProgress + windowSize * 0.5],
+    [1, 1.5, 1]
+  );
+  
+  const backgroundColor = useTransform(
+    scrollYProgress,
+    [cardProgress - windowSize * 0.5, cardProgress, cardProgress + windowSize * 0.5],
+    ['#333333', '#00f5ff', '#333333']
+  );
+
+  return (
+    <motion.div
+      className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full"
+      style={{ opacity, scale, backgroundColor }}
+    />
+  );
+}
+
+export default function Services() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  const total = services.length;
+  const anglePerItem = 360 / total;
+  const totalRotation = anglePerItem * (total - 1);
+  
+  const rotateY = useTransform(scrollYProgress, [0, 1], [0, -totalRotation]);
+
+  return (
+    <section id="fase-3" ref={containerRef} className="relative h-[600vh] bg-[#0a0a0a]">
+      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden" style={{ perspective: '1200px' }}>
+        
+        {/* Header - Fixed on screen */}
+        <div className="absolute top-8 md:top-20 left-0 right-0 text-center z-50 pointer-events-none">
+          <h3 className="text-[#6a00ff] font-mono text-lg md:text-xl mb-1 md:mb-2">Fase 3</h3>
+          <h2 className="text-3xl md:text-5xl font-bold">Meus <span className="text-gradient">Serviços</span></h2>
+          <p className="text-gray-500 mt-2 md:mt-4 text-sm md:text-base animate-pulse">Role para baixo para explorar</p>
+        </div>
+
+        {/* 3D Scene */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-16"
+          className="relative w-full h-full flex items-center justify-center mt-16 md:mt-0"
+          style={{
+            rotateY,
+            z: -1000, // Push the scene back by the radius
+            transformStyle: "preserve-3d",
+          }}
         >
-          <h3 className="text-[#6a00ff] font-mono text-xl mb-2">Fase 3</h3>
-          <h2 className="text-4xl md:text-5xl font-bold">Meus <span className="text-gradient">Serviços</span></h2>
+          {services.map((service, index) => (
+            <ServiceCard 
+              key={index} 
+              service={service} 
+              index={index} 
+              total={total} 
+              scrollYProgress={scrollYProgress} 
+            />
+          ))}
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" style={{ perspective: '1500px' }}>
-          {services.map((service, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 80, rotateX: 20, rotateY: -10, scale: 0.9 }}
-              whileInView={{ opacity: 1, y: 0, rotateX: 0, rotateY: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 120, 
-                damping: 20, 
-                delay: index * 0.05 
-              }}
-              whileHover={{ 
-                y: -8, 
-                scale: 1.02, 
-                rotateX: 5, 
-                rotateY: -5,
-                z: 30
-              }}
-              style={{ transformStyle: "preserve-3d" }}
-              className="group relative p-6 rounded-2xl bg-[#111111] border border-[#222] hover:border-[#00f5ff]/40 transition-colors duration-300 shadow-lg hover:shadow-[0_20px_40px_rgba(0,245,255,0.1)] flex flex-col h-full will-change-transform"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#00f5ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" style={{ transform: "translateZ(-5px)" }} />
-              <div className="relative z-10 flex flex-col h-full" style={{ transform: "translateZ(20px)" }}>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#1a1a1a] border border-[#333] flex items-center justify-center flex-shrink-0 group-hover:border-[#6a00ff]/50 transition-colors duration-300" style={{ transform: "translateZ(10px)" }}>
-                    <service.icon className="w-6 h-6 text-[#00f5ff] group-hover:text-[#6a00ff] transition-colors" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white leading-tight" style={{ transform: "translateZ(25px)" }}>{service.title}</h3>
-                </div>
-                <ul className="space-y-2 text-sm text-gray-400 flex-grow" style={{ transform: "translateZ(15px)" }}>
-                  {service.items.map((item, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="text-[#6a00ff] mt-1 text-[10px]">▶</span>
-                      <span className="leading-snug">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </motion.div>
-          ))}
+        {/* Progress Indicator */}
+        <div className="absolute bottom-12 left-0 right-0 flex justify-center z-50 pointer-events-none">
+          <div className="flex gap-2 flex-wrap justify-center max-w-[80%]">
+            {services.map((_, i) => (
+              <ProgressDot key={i} index={i} total={total} scrollYProgress={scrollYProgress} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
