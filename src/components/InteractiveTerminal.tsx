@@ -6,8 +6,8 @@ export default function InteractiveTerminal() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<{ type: 'input' | 'output', text: string | React.ReactNode }[]>([
-    { type: 'output', text: 'Developer Terminal v1.0.0' },
-    { type: 'output', text: 'Type "help" to see available commands.' }
+    { type: 'output', text: 'Terminal do Desenvolvedor v1.0.0' },
+    { type: 'output', text: 'Digite "ajuda" para ver os comandos disponíveis.' }
   ]);
   const inputRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -29,36 +29,47 @@ export default function InteractiveTerminal() {
     let output: React.ReactNode = '';
 
     switch (trimmedCmd) {
+      case 'ajuda':
       case 'help':
         output = (
           <div className="text-gray-300">
-            Available commands:<br/>
-            <span className="text-[#00f5ff]">skills</span> - List my technical skills<br/>
-            <span className="text-[#00f5ff]">projetos</span> - View my recent projects<br/>
-            <span className="text-[#00f5ff]">clear</span> - Clear terminal output<br/>
-            <span className="text-[#00f5ff]">contato</span> - Get my contact info
+            Comandos disponíveis:<br/>
+            <span className="text-[#00f5ff]">sobre</span> - Quem sou eu<br/>
+            <span className="text-[#00f5ff]">habilidades</span> - Minhas skills técnicas<br/>
+            <span className="text-[#00f5ff]">projetos</span> - Ver meus projetos recentes<br/>
+            <span className="text-[#00f5ff]">contato</span> - Como falar comigo<br/>
+            <span className="text-[#00f5ff]">limpar</span> - Limpar o terminal<br/>
+            <span className="text-[#00f5ff]">matrix</span> - ?????
           </div>
         );
         break;
+      case 'sobre':
+        output = (
+          <div className="text-gray-300">
+            Olá! Sou João Layon, um Desenvolvedor Full Stack apaixonado por criar soluções web de alta performance, automações e APIs robustas. Transformo café em código. ☕
+          </div>
+        );
+        break;
+      case 'habilidades':
       case 'skills':
         output = (
           <div className="text-gray-300">
-            [+] Python<br/>
-            [+] Flask<br/>
-            [+] JavaScript<br/>
-            [+] APIs<br/>
-            [+] OpenCV<br/>
-            [+] SQLite
+            [+] Python (Flask, Automação)<br/>
+            [+] JavaScript / TypeScript<br/>
+            [+] React / Next.js<br/>
+            [+] APIs RESTful<br/>
+            [+] Banco de Dados (SQLite, PostgreSQL)<br/>
+            [+] OpenCV & Visão Computacional
           </div>
         );
         break;
       case 'projetos':
         output = (
           <div className="text-gray-300">
-            1. Sistema de Clínica<br/>
-            2. Sistema de Loja<br/>
-            3. Dashboard de Dados<br/>
-            4. Automação Empresarial
+            1. <span className="text-[#00f5ff]">Sistema de Clínica</span> - Gestão completa<br/>
+            2. <span className="text-[#00f5ff]">Sistema de Loja</span> - E-commerce e PDV<br/>
+            3. <span className="text-[#00f5ff]">Dashboard de Dados</span> - Analytics em tempo real<br/>
+            4. <span className="text-[#00f5ff]">Automação Empresarial</span> - Bots e scripts
           </div>
         );
         break;
@@ -70,13 +81,26 @@ export default function InteractiveTerminal() {
           </div>
         );
         break;
+      case 'limpar':
       case 'clear':
         setHistory([]);
         return;
+      case 'sudo':
+        output = <span className="text-red-400">Permissão negada. Este incidente será reportado. 🚨</span>;
+        break;
+      case 'matrix':
+        output = (
+          <div className="text-green-500 font-bold animate-pulse">
+            Wake up, Neo...<br/>
+            The Matrix has you...<br/>
+            Follow the white rabbit. 🐇
+          </div>
+        );
+        break;
       case '':
         return;
       default:
-        output = <span className="text-red-400">Command not found: {cmd}</span>;
+        output = <span className="text-red-400">Comando não encontrado: {cmd}. Digite "ajuda".</span>;
     }
 
     setHistory(prev => [...prev, { type: 'input', text: cmd }, { type: 'output', text: output }]);
@@ -116,7 +140,7 @@ export default function InteractiveTerminal() {
                 <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
                 <div className="w-3 h-3 rounded-full bg-green-500/80" />
               </div>
-              <span className="text-xs text-gray-500 font-mono">developer@terminal:~</span>
+              <span className="text-xs text-gray-500 font-mono">joaolayon@terminal:~</span>
               <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
