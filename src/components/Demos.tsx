@@ -83,7 +83,7 @@ export default function Demos() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8 }}
-                className="lg:w-5/12 space-y-6"
+                className="lg:w-5/12 space-y-6 will-change-transform"
               >
                 <h3 className="text-3xl md:text-4xl font-bold">{demo.title}</h3>
                 <p className="text-xl text-gray-400 leading-relaxed">{demo.desc}</p>
@@ -98,7 +98,7 @@ export default function Demos() {
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8 }}
                 whileHover={{ scale: 1.02 }}
-                className="lg:w-7/12 w-full cursor-pointer"
+                className="lg:w-7/12 w-full cursor-pointer will-change-transform"
               >
                 <div className={`relative rounded-3xl p-1 bg-gradient-to-br ${demo.color}`}>
                   <div className="bg-[#111111] rounded-[22px] overflow-hidden border border-[#333] shadow-2xl h-64 md:h-80 flex flex-col">

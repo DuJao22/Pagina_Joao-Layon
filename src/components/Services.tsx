@@ -102,26 +102,38 @@ export default function Services() {
           <h2 className="text-4xl md:text-5xl font-bold">Meus <span className="text-gradient">Serviços</span></h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" style={{ perspective: '1500px' }}>
           {services.map((service, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 80, rotateX: 20, rotateY: -10, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0, rotateY: 0, scale: 1 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: (index % 4) * 0.1, duration: 0.5 }}
-              whileHover={{ y: -5, scale: 1.02 }}
-              className="group relative p-6 rounded-2xl bg-[#111111] border border-[#222] hover:border-[#00f5ff]/50 transition-all duration-300 overflow-hidden shadow-lg hover:shadow-[0_0_20px_rgba(0,245,255,0.1)] flex flex-col h-full"
+              transition={{ 
+                type: "spring", 
+                stiffness: 120, 
+                damping: 20, 
+                delay: index * 0.05 
+              }}
+              whileHover={{ 
+                y: -8, 
+                scale: 1.02, 
+                rotateX: 5, 
+                rotateY: -5,
+                z: 30
+              }}
+              style={{ transformStyle: "preserve-3d" }}
+              className="group relative p-6 rounded-2xl bg-[#111111] border border-[#222] hover:border-[#00f5ff]/40 transition-colors duration-300 shadow-lg hover:shadow-[0_20px_40px_rgba(0,245,255,0.1)] flex flex-col h-full will-change-transform"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#00f5ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative z-10 flex flex-col h-full">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#00f5ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" style={{ transform: "translateZ(-5px)" }} />
+              <div className="relative z-10 flex flex-col h-full" style={{ transform: "translateZ(20px)" }}>
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#1a1a1a] border border-[#333] flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:border-[#6a00ff]/50 group-hover:rotate-3 transition-all duration-300">
+                  <div className="w-12 h-12 rounded-xl bg-[#1a1a1a] border border-[#333] flex items-center justify-center flex-shrink-0 group-hover:border-[#6a00ff]/50 transition-colors duration-300" style={{ transform: "translateZ(10px)" }}>
                     <service.icon className="w-6 h-6 text-[#00f5ff] group-hover:text-[#6a00ff] transition-colors" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white leading-tight">{service.title}</h3>
+                  <h3 className="text-xl font-semibold text-white leading-tight" style={{ transform: "translateZ(25px)" }}>{service.title}</h3>
                 </div>
-                <ul className="space-y-2 text-sm text-gray-400 flex-grow">
+                <ul className="space-y-2 text-sm text-gray-400 flex-grow" style={{ transform: "translateZ(15px)" }}>
                   {service.items.map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
                       <span className="text-[#6a00ff] mt-1 text-[10px]">▶</span>

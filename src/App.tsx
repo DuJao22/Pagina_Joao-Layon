@@ -3,16 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { motion } from 'motion/react';
 import Hero from './components/Hero';
 import About from './components/About';
-import Services from './components/Services';
-import Technologies from './components/Technologies';
-import Demos from './components/Demos';
-import Contact from './components/Contact';
 import InteractiveTerminal from './components/InteractiveTerminal';
-import Differentials from './components/Differentials';
+
+// Lazy load components that are hidden initially to optimize initial bundle size
+const Technologies = lazy(() => import('./components/Technologies'));
+const Services = lazy(() => import('./components/Services'));
+const Differentials = lazy(() => import('./components/Differentials'));
+const Demos = lazy(() => import('./components/Demos'));
+const Contact = lazy(() => import('./components/Contact'));
 
 export default function App() {
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -28,11 +30,20 @@ export default function App() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          <Technologies />
-          <Services />
-          <Differentials />
-          <Demos />
-          <Contact />
+          <Suspense fallback={
+            <div className="py-32 flex justify-center items-center">
+              <div className="text-[#00f5ff] font-mono animate-pulse flex items-center gap-3">
+                <span className="w-2 h-4 bg-[#00f5ff] inline-block" />
+                Carregando módulos do sistema...
+              </div>
+            </div>
+          }>
+            <Technologies />
+            <Services />
+            <Differentials />
+            <Demos />
+            <Contact />
+          </Suspense>
         </motion.div>
       )}
       
